@@ -1,0 +1,73 @@
+#selenium import
+from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+import time
+import keyword
+
+import os
+import wget
+
+
+#chrome_options = webdriver.ChromeOptions()
+#chrome_options.add_argument('--no-sandbox')
+#chrome_options.add_argument("--disable-extensions")
+#chrome_options.add_argument("--incognito")
+#browser = webdriver.Chrome(executable_path=ChromeDriverManager().install(), chrome_options=chrome_options)
+#path= "C:/Users/ericf/.spyder-py3/chromedriver"
+
+#driver = webdriver.Chrome ('D:/Applications/Anaconda3/Chromedriver')
+driver = webdriver.Chrome('C:/Users/ericf/.spyder-py3/chromedriver')
+
+driver.get("https://www.instagram.com/")
+
+accetta_tutti= WebDriverWait(driver, 14).until(EC.element_to_be_clickable((By.XPATH,"//button[contains(text(), 'Accetta tutti')]"))).click()
+
+username = WebDriverWait(driver, 14).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='username']")))
+password = WebDriverWait(driver, 14).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='password']")))
+
+username.clear()
+password.clear()
+
+
+username.send_keys("eric.fiuma89@gmail.com")   #Instert IG username
+password.send_keys("ragnarock1989")           #Instert IG password
+
+
+log_in = WebDriverWait(driver, 17).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button[type='submit']"))).click()
+
+salva_le_informazioni= WebDriverWait(driver, 17).until(EC.element_to_be_clickable((By.XPATH,"//button[contains(text(), 'Salva le informazioni')]"))).click()
+
+non_ora = WebDriverWait(driver, 17).until(EC.element_to_be_clickable((By.XPATH,"//button[contains(text(), 'Non ora')]"))).click()
+non_ora2 = WebDriverWait(driver, 17).until(EC.element_to_be_clickable((By.XPATH,"//button[contains(text(), 'Non ora')]"))).click()
+
+searchbox= WebDriverWait(driver, 17).until(EC.element_to_be_clickable((By.XPATH,"//input[@placeholder='Cerca']")))
+searchbox.clear()
+keyword= '#koala'   #Instert whatever word you prefer
+
+searchbox.send_keys(keyword)
+time.sleep(5)
+searchbox.send_keys(Keys.ENTER)
+time.sleep(5)
+searchbox.send_keys(Keys.ENTER)
+time.sleep(5)
+
+
+driver.execute_script("window.scrollTo(0,4000);")
+
+images = driver.find_elements_by_tag_name('img')
+images = [image.get_attribute('src') for image in images]
+
+
+path =os.getcwd()
+path = os.path.join(path, keyword[1:] + "s")
+os.mkdir(path)
+
+counter = 0 
+for image in images:
+    save_as = os.path.join(path, keyword[1:]+ str(counter)+ '.jpg')
+    wget.download(image, save_as)
+    counter += 1
