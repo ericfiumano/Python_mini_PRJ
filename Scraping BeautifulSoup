@@ -1,4 +1,4 @@
-import bs4, requests, webbrowser  #bs4 is four html scraping
+import bs4, requests, webbrowser  #bs4 is meant for html scraping
 
 LINK = 'https://www.subito.it/annunci-lombardia/vendita/auto/?q=fiat+500'    #Starting Link 
 PRE_LINK_ANNUNCIO= 'https://www.subito.it/auto/'                              #Link to check the beginning of the test-link
