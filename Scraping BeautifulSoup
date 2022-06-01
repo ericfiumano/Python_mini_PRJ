@@ -1,0 +1,35 @@
+import bs4, requests, webbrowser  #bs4 is four html scraping
+
+LINK = 'https://www.subito.it/annunci-lombardia/vendita/auto/?q=fiat+500'    #Starting Link 
+PRE_LINK_ANNUNCIO= 'https://www.subito.it/auto/'                              #Link to check the beginning of the test-link
+
+response  = requests.get(LINK)    #get the Link and put it into response
+response.raise_for_status()      #returns the status of the response.get function
+
+soup = bs4.BeautifulSoup(response.text, 'html.parser')                                         #put into obj soup the the response
+div_annunci= soup.find('div', class_='ListingContainer_col__1TZpb ListingContainer_items__3lMdo col items') #class of the Subito list (copied checking with ctr+shift+i and ctrl+shift+c, the area where all the listing is shown)
+
+a_annunci= div_annunci.find_all('a') # 'a' è la metodologia di lettura del find_all 
+link_annunci= []  #Nuova lista di annunci
+for a_annuncio in a_annunci:
+    link_annuncio = str(a_annuncio.get('href')) #str  get the string from a_annuncio
+    if PRE_LINK_ANNUNCIO in link_annuncio:
+        link_annunci.append(link_annuncio)
+from pprint import pprint
+pprint(link_annunci)
+
+f = open('Risultati_salvati.txt', 'a')
+old_link_annunci= [riga.rstrip('\n') for riga in open('Risultati_salvati.txt')] #Vecchi annunci
+new_link_annunci = []
+for link_annuncio in link_annunci:
+    if link_annuncio not in old_link_annunci:
+        new_link_annunci.append(link_annuncio)
+        f.write('%s\n' % link_annuncio)
+f.close()
+if link_annunci:
+    print('Ci sono risultati! Apertura in corso . . . ')
+    for new_link in new_link_annunci:
+        webbrowser.open(new_link)  #apri link nel browser
+else:
+    print('Nessun annuncio')
+input('\n Great job :-)')
